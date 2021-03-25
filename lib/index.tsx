@@ -5,6 +5,7 @@ import {
   GestureResponderEvent,
   ImageURISource,
   LayoutChangeEvent,
+  StyleSheet,
   Text,
   TextStyle,
   TouchableOpacity,
@@ -26,6 +27,8 @@ import { useNetInfo } from '@react-native-community/netinfo'
 import { withDefaultProps } from 'with-default-props'
 import React, { ReactNode, useEffect, useState } from 'react'
 import Slider from '@react-native-community/slider'
+
+import styles from './index-styles'
 
 const SLIDER_COLOR = '#009485'
 const BUFFERING_SHOW_DELAY = 200
@@ -566,14 +569,9 @@ const VideoPlayer = (props: Props) => {
       {...otherProps}
       style={[
         {
-          position: 'absolute',
-          left: (videoWidth - centeredContentWidth) / 2,
-          top: (videoHeight - centeredContentWidth) / 2,
-          width: centeredContentWidth,
-          height: centeredContentWidth,
-          flexDirection: 'column',
-          justifyContent: 'center',
+          ...StyleSheet.absoluteFillObject,
           alignItems: 'center',
+          justifyContent: 'center',
         },
         viewStyle,
       ]}
@@ -607,10 +605,7 @@ const VideoPlayer = (props: Props) => {
             videoRef && videoRef(component)
           }}
           onPlaybackStatusUpdate={updatePlaybackCallback}
-          style={{
-            width: videoWidth,
-            height: videoHeight,
-          }}
+          style={[styles.video, style]}
           {...otherVideoProps}
         />
 
