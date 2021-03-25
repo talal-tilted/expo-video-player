@@ -1,11 +1,12 @@
 import { __rest } from "tslib";
 import { Audio, Video } from 'expo-av';
-import { Animated, Dimensions, Text, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
+import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 import { FullscreenEnterIcon, FullscreenExitIcon, PauseIcon, PlayIcon, ReplayIcon, Spinner, } from './assets/icons';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { withDefaultProps } from 'with-default-props';
 import React, { useEffect, useState } from 'react';
 import Slider from '@react-native-community/slider';
+import styles from './index-styles';
 const SLIDER_COLOR = '#009485';
 const BUFFERING_SHOW_DELAY = 200;
 // UI states
@@ -373,16 +374,7 @@ const VideoPlayer = (props) => {
         // pointerEvents,
         otherProps = __rest(_a, ["children", "style"]);
         return (<Animated.View {...otherProps} style={[
-            {
-                position: 'absolute',
-                left: (videoWidth - centeredContentWidth) / 2,
-                top: (videoHeight - centeredContentWidth) / 2,
-                width: centeredContentWidth,
-                height: centeredContentWidth,
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-            },
+            Object.assign(Object.assign({}, StyleSheet.absoluteFillObject), { alignItems: 'center', justifyContent: 'center' }),
             viewStyle,
         ]}>
       {children}
@@ -403,10 +395,7 @@ const VideoPlayer = (props) => {
         playbackInstance = component;
         ref && ref(component);
         videoRef && videoRef(component);
-    }} onPlaybackStatusUpdate={updatePlaybackCallback} style={{
-        width: videoWidth,
-        height: videoHeight,
-    }} {...otherVideoProps}/>
+    }} onPlaybackStatusUpdate={updatePlaybackCallback} style={[styles.video, style]} {...otherVideoProps}/>
 
         
         
