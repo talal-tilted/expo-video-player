@@ -401,16 +401,7 @@ const VideoPlayer = (props) => {
         
         {((playbackState === PlaybackStates.Buffering &&
         Date.now() - lastPlaybackStateUpdate > BUFFERING_SHOW_DELAY) ||
-        playbackState === PlaybackStates.Loading) && (<View style={{
-        position: 'absolute',
-        left: (videoWidth - centeredContentWidth) / 2,
-        top: (videoHeight - centeredContentWidth) / 2,
-        width: centeredContentWidth,
-        height: centeredContentWidth,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-    }}>
+        playbackState === PlaybackStates.Loading) && (<View style={Object.assign(Object.assign({}, StyleSheet.absoluteFillObject), { alignItems: 'center', flexDirection: 'column', justifyContent: 'center' })}>
             <VideoSpinner />
           </View>)}
 
@@ -455,7 +446,7 @@ const VideoPlayer = (props) => {
 
           
           {!disableSlider && (<TouchableWithoutFeedback onLayout={onSliderLayout} onPress={onSeekBarTap}>
-              <Slider style={{ marginRight: 10, marginLeft: 10, flex: 1 }} thumbTintColor={sliderColor} minimumTrackTintColor={sliderColor} trackImage={iosTrackImage} thumbImage={thumbImage} value={getSeekSliderPosition()} onValueChange={onSeekSliderValueChange} onSlidingComplete={onSeekSliderSlidingComplete} disabled={playbackState === PlaybackStates.Loading ||
+              <Slider minimumTrackTintColor={sliderColor} onSlidingComplete={onSeekSliderSlidingComplete} onValueChange={onSeekSliderValueChange} style={styles.slider} thumbImage={thumbImage} thumbTintColor={sliderColor} trackImage={iosTrackImage} value={getSeekSliderPosition()} disabled={playbackState === PlaybackStates.Loading ||
         playbackState === PlaybackStates.Ended ||
         playbackState === PlaybackStates.Error ||
         controlsState !== ControlStates.Shown}/>

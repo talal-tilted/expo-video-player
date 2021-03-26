@@ -5,6 +5,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  slider: {
+    marginHorizontal: 10,
+    flex: 1
+  },
+
   video: {
     height: '100%',
     width: '100%',
