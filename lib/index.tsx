@@ -29,9 +29,10 @@ import React, { ReactNode, useEffect, useState } from 'react'
 import Slider from '@react-native-community/slider'
 
 import styles from './index-styles'
+import Loader from "./components/loader";
 
 const SLIDER_COLOR = '#009485'
-const BUFFERING_SHOW_DELAY = 200
+// const BUFFERING_SHOW_DELAY = 200
 
 // UI states
 enum ControlStates {
@@ -41,7 +42,7 @@ enum ControlStates {
   Hiding = 'Hiding',
 }
 
-enum PlaybackStates {
+export enum PlaybackStates {
   Loading = 'Loading',
   Playing = 'Playing',
   Paused = 'Paused',
@@ -166,7 +167,6 @@ const VideoPlayer = (props: Props) => {
 
   const { isConnected } = useNetInfo()
   const [playbackState, setPlaybackState] = useState<PlaybackStates>(PlaybackStates.Loading)
-  const [lastPlaybackStateUpdate, setLastPlaybackStateUpdate] = useState<number>(Date.now())
   const [seekState, setSeekState] = useState<SeekStates>(SeekStates.NotSeeking)
   const [playbackInstancePosition, setPlaybackInstancePosition] = useState(0)
   const [playbackInstanceDuration, setPlaybackInstanceDuration] = useState(0)
@@ -228,7 +228,6 @@ const VideoPlayer = (props: Props) => {
           shouldPlay
         )
       setPlaybackState(newPlaybackState)
-      setLastPlaybackStateUpdate(Date.now())
     }
   }
 
@@ -483,7 +482,6 @@ const VideoPlayer = (props: Props) => {
   const {
     playIcon: VideoPlayIcon,
     pauseIcon: VideoPauseIcon,
-    spinner: VideoSpinner,
     fullscreenEnterIcon: VideoFullscreenEnterIcon,
     fullscreenExitIcon: VideoFullscreenExitIcon,
     replayIcon: VideoReplayIcon,
@@ -515,7 +513,7 @@ const VideoPlayer = (props: Props) => {
 
   // Do not let the user override `ref`, `callback`, and `style`
   // @ts-ignore
-  const { videoRef, ref, style, onPlaybackStatusUpdate, source, ...otherVideoProps } = videoProps
+  const { color, videoRef, ref, style, onPlaybackStatusUpdate, source, ...otherVideoProps } = videoProps
 
   const Control = ({
     callback,
@@ -598,33 +596,18 @@ const VideoPlayer = (props: Props) => {
     <TouchableWithoutFeedback onPress={toggleControls}>
       <View style={{ backgroundColor: videoBackground }}>
         <Video
-          source={source}
+          onPlaybackStatusUpdate={updatePlaybackCallback}
           ref={component => {
             playbackInstance = component
             ref && ref(component)
             videoRef && videoRef(component)
           }}
-          onPlaybackStatusUpdate={updatePlaybackCallback}
+          source={source}
           style={[styles.video, style]}
           {...otherVideoProps}
         />
 
-        {/* Spinner */}
-        {/* Due to loading Animation, it cannot use CenteredView */}
-        {((playbackState === PlaybackStates.Buffering &&
-          Date.now() - lastPlaybackStateUpdate > BUFFERING_SHOW_DELAY) ||
-          playbackState === PlaybackStates.Loading) && (
-          <View
-            style={{
-              ...StyleSheet.absoluteFillObject,
-              alignItems: 'center',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}
-          >
-            <VideoSpinner />
-          </View>
-        )}
+        <Loader color={color} playbackState={playbackState} />
 
         {/* Play/pause buttons */}
         {seekState !== SeekStates.Seeking &&

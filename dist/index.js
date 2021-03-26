@@ -7,8 +7,9 @@ import { withDefaultProps } from 'with-default-props';
 import React, { useEffect, useState } from 'react';
 import Slider from '@react-native-community/slider';
 import styles from './index-styles';
+import Loader from "./components/loader";
 const SLIDER_COLOR = '#009485';
-const BUFFERING_SHOW_DELAY = 200;
+// const BUFFERING_SHOW_DELAY = 200
 // UI states
 var ControlStates;
 (function (ControlStates) {
@@ -17,7 +18,7 @@ var ControlStates;
     ControlStates["Hidden"] = "Hidden";
     ControlStates["Hiding"] = "Hiding";
 })(ControlStates || (ControlStates = {}));
-var PlaybackStates;
+export var PlaybackStates;
 (function (PlaybackStates) {
     PlaybackStates["Loading"] = "Loading";
     PlaybackStates["Playing"] = "Playing";
@@ -83,7 +84,6 @@ const VideoPlayer = (props) => {
     let controlsTimer = null;
     const { isConnected } = useNetInfo();
     const [playbackState, setPlaybackState] = useState(PlaybackStates.Loading);
-    const [lastPlaybackStateUpdate, setLastPlaybackStateUpdate] = useState(Date.now());
     const [seekState, setSeekState] = useState(SeekStates.NotSeeking);
     const [playbackInstancePosition, setPlaybackInstancePosition] = useState(0);
     const [playbackInstanceDuration, setPlaybackInstanceDuration] = useState(0);
@@ -129,7 +129,6 @@ const VideoPlayer = (props) => {
             debug &&
                 console.info('[playback]', playbackState, ' -> ', newPlaybackState, ' [seek] ', seekState, ' [shouldPlay] ', shouldPlay);
             setPlaybackState(newPlaybackState);
-            setLastPlaybackStateUpdate(Date.now());
         }
     };
     const updateSeekState = (newSeekState) => {
@@ -340,7 +339,7 @@ const VideoPlayer = (props) => {
         }
         controlsTimer = setTimeout(() => onTimerDone(), hideControlsTimerDuration);
     };
-    const { playIcon: VideoPlayIcon, pauseIcon: VideoPauseIcon, spinner: VideoSpinner, fullscreenEnterIcon: VideoFullscreenEnterIcon, fullscreenExitIcon: VideoFullscreenExitIcon, replayIcon: VideoReplayIcon, switchToLandscape, switchToPortrait, inFullscreen, sliderColor, disableSlider, thumbImage, iosTrackImage, showFullscreenButton, textStyle, videoProps, videoBackground, width, height, } = props;
+    const { playIcon: VideoPlayIcon, pauseIcon: VideoPauseIcon, fullscreenEnterIcon: VideoFullscreenEnterIcon, fullscreenExitIcon: VideoFullscreenExitIcon, replayIcon: VideoReplayIcon, switchToLandscape, switchToPortrait, inFullscreen, sliderColor, disableSlider, thumbImage, iosTrackImage, showFullscreenButton, textStyle, videoProps, videoBackground, width, height, } = props;
     const centeredContentWidth = 60;
     const screenRatio = width / height;
     let videoHeight = height;
@@ -351,7 +350,7 @@ const VideoPlayer = (props) => {
     }
     // Do not let the user override `ref`, `callback`, and `style`
     // @ts-ignore
-    const { videoRef, ref, style, onPlaybackStatusUpdate, source } = videoProps, otherVideoProps = __rest(videoProps, ["videoRef", "ref", "style", "onPlaybackStatusUpdate", "source"]);
+    const { color, videoRef, ref, style, onPlaybackStatusUpdate, source } = videoProps, otherVideoProps = __rest(videoProps, ["color", "videoRef", "ref", "style", "onPlaybackStatusUpdate", "source"]);
     const Control = (_a) => {
         var { callback, center, children, transparent = false } = _a, otherProps = __rest(_a, ["callback", "center", "children", "transparent"]);
         return (<TouchableOpacity {...otherProps} hitSlop={{ top: 20, left: 20, bottom: 20, right: 20 }} onPress={() => {
@@ -391,19 +390,13 @@ const VideoPlayer = (props) => {
     </View>);
     return (<TouchableWithoutFeedback onPress={toggleControls}>
       <View style={{ backgroundColor: videoBackground }}>
-        <Video source={source} ref={component => {
+        <Video onPlaybackStatusUpdate={updatePlaybackCallback} ref={component => {
         playbackInstance = component;
         ref && ref(component);
         videoRef && videoRef(component);
-    }} onPlaybackStatusUpdate={updatePlaybackCallback} style={[styles.video, style]} {...otherVideoProps}/>
+    }} source={source} style={[styles.video, style]} {...otherVideoProps}/>
 
-        
-        
-        {((playbackState === PlaybackStates.Buffering &&
-        Date.now() - lastPlaybackStateUpdate > BUFFERING_SHOW_DELAY) ||
-        playbackState === PlaybackStates.Loading) && (<View style={Object.assign(Object.assign({}, StyleSheet.absoluteFillObject), { alignItems: 'center', flexDirection: 'column', justifyContent: 'center' })}>
-            <VideoSpinner />
-          </View>)}
+        <Loader color={color} playbackState={playbackState}/>
 
         
         {seekState !== SeekStates.Seeking &&

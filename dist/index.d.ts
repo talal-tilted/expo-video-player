@@ -1,6 +1,14 @@
 import { AVPlaybackStatus, Video, VideoProps } from 'expo-av';
 import { ImageURISource, TextStyle } from 'react-native';
 import { ReactNode } from 'react';
+export declare enum PlaybackStates {
+    Loading = "Loading",
+    Playing = "Playing",
+    Paused = "Paused",
+    Buffering = "Buffering",
+    Error = "Error",
+    Ended = "Ended"
+}
 declare enum ErrorSeverity {
     Fatal = "Fatal",
     NonFatal = "NonFatal"
@@ -45,7 +53,6 @@ declare const _default: (props: Pick<Props, "videoProps"> & {
     children?: null | undefined;
     playIcon?: (() => JSX.Element) | undefined;
     pauseIcon?: (() => JSX.Element) | undefined;
-    spinner?: (() => JSX.Element) | undefined;
     fullscreenEnterIcon?: (() => JSX.Element) | undefined;
     fullscreenExitIcon?: (() => JSX.Element) | undefined;
     replayIcon?: (() => JSX.Element) | undefined;
@@ -72,6 +79,7 @@ declare const _default: (props: Pick<Props, "videoProps"> & {
     quickFadeOutDuration?: number | undefined;
     fadeOutDuration?: number | undefined;
     hideControlsTimerDuration?: number | undefined;
+    spinner?: (() => JSX.Element) | undefined;
     showControlsOnLoad?: boolean | undefined;
 }, ref?: unknown) => JSX.Element;
 export default _default;
